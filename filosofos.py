@@ -1,63 +1,64 @@
+#importo librerias
 import time
 import threading
 import random
 import tkinter as tk
 
-N = 5
+N = 5   #Numero de filosofos
 
-Max = 2
+Max = 2 #Numero de veces maximo que van a comer cada filosofo
 
-class filosofo(threading.Thread):
-    semaforo = threading.Lock()
-    estado = []
-    tenedores = []
-    count=0
+class filosofo(threading.Thread):     
+    semaforo = threading.Lock() 
+    estado = []     #Lista de estados de los filosofos
+    tenedores = []      #Lista de semaforos
+    count=0     #Contador de filosofos
     
-    def __init__(self, ventana):
+    def __init__(self, ventana):        #Funcion para inicializar el filosofo  
         super().__init__()
         self.ventana=ventana
         self.id=filosofo.count
         filosofo.count+=1
         self.veces= 0
-        filosofo.estado.append('PENSANDO')
+        filosofo.estado.append('PENSANDO')      #Se inicializa el estado del filosofo como pensando
         filosofo.tenedores.append(threading.Semaphore(0))
-        self.ventana.logs("FILOSOFO {} - PENSANDO".format(self.id))
+        self.ventana.logs("FILOSOFO {} - PENSANDO".format(self.id))   #Se imprime en la ventana que el filosofo esta pensando
         
-    def __del__(self):
+    def __del__(self):  #Funcion para que el filosofo se vaya de la mesa
         self.ventana.logs("FILOSOFO {} - TERMINA de comer".format(self.id))
     
-    def pensar(self):
+    def pensar(self): #Funcion para que el filosofo piense
         time.sleep(random.randint(0,5))
     
-    def derecha(self,i):
+    def derecha(self,i):    #Funcion para saber el filosofo de la derecha    
         return (i-1)%N
     
-    def izquierda(self,i):
+    def izquierda(self,i):  #Funcion para saber el filosofo de la izquierda
         return(i+1)%N
     
-    def verificar(self,i):
-        if filosofo.estado[i] == 'HAMBRIENTO' and filosofo.estado[self.izquierda(i)] != 'COMIENDO' and filosofo.estado[self.derecha(i)] != 'COMIENDO':
-            filosofo.estado[i]='COMIENDO'
+    def verificar(self,i):  #Funcion para verificar si el filosofo puede comer
+        if filosofo.estado[i] == 'HAMBRIENTO' and filosofo.estado[self.izquierda(i)] != 'COMIENDO' and filosofo.estado[self.derecha(i)] != 'COMIENDO':      
+            filosofo.estado[i]='COMIENDO'   #Si el filosofo puede comer, se cambia su estado a comiendo
             filosofo.tenedores[i].release()
             
-    def tomar(self):
+    def tomar(self):    #Funcion para que el filosofo tome los tenedores
         filosofo.semaforo.acquire()
-        filosofo.estado[self.id] = 'HAMBRIENTO'
-        self.verificar(self.id)
-        filosofo.semaforo.release()
+        filosofo.estado[self.id] = 'HAMBRIENTO' #Se cambia el estado del filosofo a hambriento
+        self.verificar(self.id) #Se verifica si el filosofo puede comer
+        filosofo.semaforo.release()     
         filosofo.tenedores[self.id].acquire()
     
-    def soltar(self):
-        filosofo.semaforo.acquire()
-        filosofo.estado[self.id] = 'PENSANDO'
+    def soltar(self):   #Funcion para que el filosofo suelte los tenedores
+        filosofo.semaforo.acquire() 
+        filosofo.estado[self.id] = 'PENSANDO'   #Se cambia el estado del filosofo a pensando
         self.ventana.estado_filosofos[self.id].config(bg= "white")
         self.verificar(self.izquierda(self.id))
         self.verificar(self.derecha(self.id))
         filosofo.semaforo.release()
         
-    def comer(self):
+    def comer(self):    #Funcion para que el filosofo coma
     
-        self.ventana.logs("FILOSOFO {} COMIENDO".format(self.id))
+        self.ventana.logs("FILOSOFO {} COMIENDO".format(self.id))   #Se imprime en la ventana que el filosofo esta comiendo
         self.ventana.estado_filosofos[self.id].config(bg= "yellow")
         self.ventana.estado_tenedores[self.id].config(bg= "green")
         time.sleep(random.randint(0,5))
@@ -75,7 +76,7 @@ class filosofo(threading.Thread):
             self.veces+=1
         del self
 
-class Ventana():
+class Ventana():    #Clase para la ventana
     def __init__(self):
         self.ventana=tk.Tk()
         self.ventana.title("FILOSOFOS")
@@ -96,7 +97,7 @@ class Ventana():
         
         
         
-    def info(self):
+    def info(self): #Funcion para mostrar la informacion de la ventana
         for i in range(N):
             
             
@@ -125,20 +126,8 @@ class Ventana():
         tk.Canvas(self.ventana, width= 50, height= 50, bg= "green").place(x= 600, y= 450)
         tk.Canvas(self.ventana, width= 50, height= 50, bg= "white").place(x= 600, y= 500)
     
-    def logs(self, texto):
+    def logs(self, texto):  #Funcion para imprimir en la ventana
         self.texto.insert(tk.END, str(texto) + "\n")
         
-    def mainloop(self):
+    def mainloop(self): #Funcion para que la ventana se mantenga abierta
         self.ventana.mainloop()
-        
-if __name__ == "__main__":
-    ventana = Ventana()
-    filosofos = []
-    for i in range(N):
-        filosofos.append(filosofo(ventana))
-    for i in range(N):
-        filosofos[i].start()
-    ventana.mainloop()
-    
-    for i in range(N):
-        filosofos[i].join()
