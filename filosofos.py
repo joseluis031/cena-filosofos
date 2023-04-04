@@ -74,5 +74,53 @@ class filosofo(threading.Thread):
             self.soltar()
             self.veces+=1
         del self
+from tkinter import *
+class ventana():
+    def __init__(self):
+         
+        self.estado_filosofos = []
+        self.estado_tenedores = []
+        self.logs = []
+        self.filosofos = []
+        self.root = Tk()
+        self.root.title("FILOSOFOS")
+        self.root.geometry("800x600")
+        self.root.resizable(0,0)
+        self.root.config(bg= "black")
+        self.root.protocol("WM_DELETE_WINDOW", self.cerrar)
+        self.root.mainloop()
+    
+    def logs(self, texto):
+        self.logs.append(Tk.Label(self.root, text=texto, bg="black", fg="white"))
+        self.logs[-1].place(x=10, y=10+20*len(self.logs))
+        self.root.update()
+    
+    def estado_filosofo(self, i):
+        self.estado_filosofos.append(Tk.Label(self.root, text="FILOSOFO {}".format(i), bg="white", fg="black"))
+        self.estado_filosofos[-1].place(x=10+100*i, y=10)
+        self.root.update()
         
+    def estado_tenedor(self, i):
+        self.estado_tenedores.append(Tk.Label(self.root, text="Tenedor {}".format(i), bg="white", fg="black"))
+        self.estado_tenedores[-1].place(x=10+100*i, y=40)
+        self.root.update()
         
+    def cerrar(self):
+        for i in self.filosofos:
+            del i
+        self.root.destroy()
+    
+    def iniciar(self):
+        for i in range(N):
+            self.estado_filosofo(i)
+            self.estado_tenedor(i)
+        for i in range(N):
+            self.filosofos.append(filosofo(self))
+            self.filosofos[-1].start()
+        self.root.mainloop()
+        
+if __name__ == "__main__":
+    v = ventana()
+    v.iniciar()
+
+
