@@ -1,7 +1,7 @@
 import time
 import threading
 import random
-
+import tkinter as tk
 
 N = 5
 
@@ -74,53 +74,75 @@ class filosofo(threading.Thread):
             self.soltar()
             self.veces+=1
         del self
-from tkinter import *
-class ventana():
+
+class Ventana():
     def __init__(self):
-         
+        self.ventana=tk.Tk()
+        self.ventana.title("FILOSOFOS")
+        
+        self.texto = tk.Text(self.ventana, width= 50, height= 10)
+        self.scroll = tk.Scrollbar(self.ventana)
+        
+        self.total_comidas = []
         self.estado_filosofos = []
         self.estado_tenedores = []
-        self.logs = []
-        self.filosofos = []
-        self.root = Tk()
-        self.root.title("FILOSOFOS")
-        self.root.geometry("800x600")
-        self.root.resizable(0,0)
-        self.root.config(bg= "black")
-        self.root.protocol("WM_DELETE_WINDOW", self.cerrar)
-        self.root.mainloop()
+        
+        self.info()
+        
+        self.texto.configure(yscrollcommand= self.scroll.set)
+        self.texto.pack(side= tk.LEFT) 
+        self.scroll.config(command= self.texto.yview)
+        self.scroll.pack(side= tk.RIGHT, fill= tk.Y)
+        
+        
+        
+    def info(self):
+        for i in range(N):
+            entry = tk.Entry(self.ventana, width= 10)
+            entry.place(x= 450, y= 50 + 25*i)
+            self.total_comidas.append(entry)
+            
+            label = tk.Label(self.ventana, text= "FILOSOFO {}".format(str(i)), width= 10)
+            label.place(x= 350, y= 50 + 25*i)
+            
+            label2 = tk.Label(self.ventana, text= "Tenedor {}".format(str(i)), width= 10)
+            label2.place(x=350, y= 250  + 25*i)
+            
+            
+            self.estado_filosofos.append(label)
+            self.estado_tenedores.append(label2)
+            
+        tk.Label(self.ventana, text= "Han comido:").place(x=450, y= 25)
+        
+        tk.Canvas(self.ventana, width= 200, height= 100).place(x= 400, y= 300)
+        
+        tk.Label(self.ventana, text= "Comiendo:").place(x= 430, y= 350)
+        tk.Label(self.ventana, text= "Pensando:").place(x= 430, y= 400)
+            
+        tk.Label(self.ventana, text= "Tenedor ocupado:").place(x= 430, y= 450)
+        tk.Label(self.ventana, text= "Tenedor libre:").place(x= 430, y= 500)
+        
+        tk.Canvas(self.ventana, width= 50, height= 50, bg= "yellow").place(x= 600, y= 350)
+        tk.Canvas(self.ventana, width= 50, height= 50, bg= "white").place(x= 600, y= 400)
+        
+        
+        tk.Canvas(self.ventana, width= 50, height= 50, bg= "green").place(x= 600, y= 450)
+        tk.Canvas(self.ventana, width= 50, height= 50, bg= "white").place(x= 600, y= 500)
     
     def logs(self, texto):
-        self.logs.append(Tk.Label(self.root, text=texto, bg="black", fg="white"))
-        self.logs[-1].place(x=10, y=10+20*len(self.logs))
-        self.root.update()
-    
-    def estado_filosofo(self, i):
-        self.estado_filosofos.append(Tk.Label(self.root, text="FILOSOFO {}".format(i), bg="white", fg="black"))
-        self.estado_filosofos[-1].place(x=10+100*i, y=10)
-        self.root.update()
+        self.texto.insert(tk.END, str(texto) + "\n")
         
-    def estado_tenedor(self, i):
-        self.estado_tenedores.append(Tk.Label(self.root, text="Tenedor {}".format(i), bg="white", fg="black"))
-        self.estado_tenedores[-1].place(x=10+100*i, y=40)
-        self.root.update()
-        
-    def cerrar(self):
-        for i in self.filosofos:
-            del i
-        self.root.destroy()
-    
-    def iniciar(self):
-        for i in range(N):
-            self.estado_filosofo(i)
-            self.estado_tenedor(i)
-        for i in range(N):
-            self.filosofos.append(filosofo(self))
-            self.filosofos[-1].start()
-        self.root.mainloop()
+    def mainloop(self):
+        self.ventana.mainloop()
         
 if __name__ == "__main__":
-    v = ventana()
-    v.iniciar()
-
-
+    ventana = Ventana()
+    filosofos = []
+    for i in range(N):
+        filosofos.append(filosofo(ventana))
+    for i in range(N):
+        filosofos[i].start()
+    ventana.mainloop()
+    
+    for i in range(N):
+        filosofos[i].join()
