@@ -98,23 +98,19 @@ class Ventana():
         
     def info(self):
         for i in range(N):
-            entry = tk.Entry(self.ventana, width= 10)
-            entry.place(x= 450, y= 50 + 25*i)
-            self.total_comidas.append(entry)
+            
             
             label = tk.Label(self.ventana, text= "FILOSOFO {}".format(str(i)), width= 10)
             label.place(x= 350, y= 50 + 25*i)
             
             label2 = tk.Label(self.ventana, text= "Tenedor {}".format(str(i)), width= 10)
-            label2.place(x=350, y= 250  + 25*i)
+            label2.place(x=850, y= 250  + 25*i)
             
             
             self.estado_filosofos.append(label)
             self.estado_tenedores.append(label2)
             
-        tk.Label(self.ventana, text= "Han comido:").place(x=450, y= 25)
         
-        tk.Canvas(self.ventana, width= 200, height= 100).place(x= 400, y= 300)
         
         tk.Label(self.ventana, text= "Comiendo:").place(x= 430, y= 350)
         tk.Label(self.ventana, text= "Pensando:").place(x= 430, y= 400)
