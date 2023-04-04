@@ -1,10 +1,10 @@
 #codigo cena de los filosofos
 
-from visual import *
-from visual.graph import *
 from random import random
 from time import sleep
 import threading
+from vpython import *
+
 # Constantes
 N = 5
 T = 0.1
@@ -22,10 +22,6 @@ Z = 0.5
 filosofos = []
 tenedores = []
 mesa = []
-g = gdisplay(x=0, y=0, width=600, height=600, title='Filosofos', xtitle='x', ytitle='y', ztitle='z', foreground=color.black, background=color.white)
-scene = display(x=600, y=0, width=600, height=600, title='Filosofos', x=0, y=0, center=(0,0,0), background=(0.5,0.5,0.5))
-scene.select()
-scene.autoscale = 0
 
 # Funciones
 def crear_filosofos():
@@ -67,5 +63,92 @@ def dibujar_todo():
     dibujar_filosofos()
     dibujar_tenedores()
     dibujar_mesa()
+    
+def pensar(filosofo):
+    print('Filosofo', filosofo, 'pensando')
+    sleep(random()*T)
 
+def comer(filosofo):
+    print('Filosofo', filosofo, 'comiendo')
+    sleep(random()*T)
+
+def tomar_tenedor(filosofo, tenedor):
+    print('Filosofo', filosofo, 'tomando tenedor', tenedor)
+    sleep(random()*T)
+    
+def soltar_tenedor(filosofo, tenedor):
+    print('Filosofo', filosofo, 'soltando tenedor', tenedor)
+    sleep(random()*T)
+
+# Clases
+class Filosofo(threading.Thread):
+    def __init__(self, id):
+        threading.Thread.__init__(self)
+        self.id = id
+        self.tenedor_izq = id
+        self.tenedor_der = (id + 1) % N
+        self.x = X * cos(2 * pi * id / N)
+        self.y = Y * sin(2 * pi * id / N)
+        self.z = Z
+        self.esfera = sphere(pos=(self.x, self.y, self.z), radius=R, color=color.yellow)
+        self.cilindro = cylinder(pos=(self.x, self.y, self.z))
+
+        
+    def run(self):
+        while 1:
+            pensar(self.id)
+            mesa[self.tenedor_izq].acquire()
+            tomar_tenedor(self.id, self.tenedor_izq)
+            mesa[self.tenedor_der].acquire()
+            tomar_tenedor(self.id, self.tenedor_der)
+            comer(self.id)
+            mesa[self.tenedor_izq].release()
+            soltar_tenedor(self.id, self.tenedor_izq)
+            mesa[self.tenedor_der].release()
+            soltar_tenedor(self.id, self.tenedor_der)
+            
+    def dibujar(self):
+        self.esfera.pos = (self.x, self.y, self.z)
+        self.cilindro.pos = (self.x, self.y, self.z)
+        self.label.pos = (self.x, self.y, self.z)
+        self.label.text = str(self.id)
+        
+class Tenedor:
+
+
+    def __init__(self, id):
+        self.id = id
+        self.x = X * cos(2 * pi * id / N)
+        self.y = Y * sin(2 * pi * id / N)
+        self.z = Z
+        self.cubo = box(pos=(self.x, self.y, self.z), length=L, height=H, width=W, color=color.red)
+        self.label = label(pos=(self.x, self.y, self.z), text=str(self.id), color=color.black, box=0, opacity=0)
+        
+    def dibujar(self):
+        self.cubo.pos = (self.x, self.y, self.z)
+        self.label.pos = (self.x, self.y, self.z)
+        self.label.text = str(self.id)
+        
+class Mesa:
+    def __init__(self, id):
+        self.id = id
+        self.x = X * cos(2 * pi * id / N)
+        self.y = Y * sin(2 * pi * id / N)
+        self.z = Z
+        self.cubo = box(pos=(self.x, self.y, self.z), length=L, height=H, width=W, color=color.red)
+        self.label = label(pos=(self.x, self.y, self.z), text=str(self.id), color=color.black, box=0, opacity=0)
+        
+    def dibujar(self):
+        self.cubo.pos = (self.x, self.y, self.z)
+        self.label.pos = (self.x, self.y, self.z)
+        self.label.text = str(self.id)
+
+# Main
+crear_filosofos()
+crear_tenedores()
+crear_mesa()
+iniciar_filosofos()
+while 1:
+    rate(10)
+    dibujar_todo()
 
