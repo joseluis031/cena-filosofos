@@ -156,3 +156,8 @@ if __name__ == "__main__":
     for i in range(N):
         filosofos[i].join()
 ```
+
+
+## Ejecucion del codigo
+![filosofos](https://user-images.githubusercontent.com/91721888/230769519-88b80cb6-03e0-4d53-96ce-06cb7afdb5e2.png)
+
