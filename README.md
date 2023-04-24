@@ -159,5 +159,5 @@ if __name__ == "__main__":
 
 
 ## Ejecucion del codigo
-![filosofos](https://user-images.githubusercontent.com/91721888/230769519-88b80cb6-03e0-4d53-96ce-06cb7afdb5e2.png)
 
+![Captura de pantalla 2023-04-24 213953](https://user-images.githubusercontent.com/91721888/234099082-c3aa8985-4e4c-4395-ab88-6f6ac1876d00.png)
