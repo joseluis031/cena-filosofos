@@ -66,8 +66,8 @@ class filosofo(threading.Thread):
     def comer(self):    #Funcion para que el filosofo coma
     
         self.ventana.logs("FILOSOFO {} COMIENDO".format(self.id))   #Se imprime en la ventana que el filosofo esta comiendo
-        self.ventana.estado_filosofos[self.id].config(bg= "yellow")
-        self.ventana.estado_tenedores[self.id].config(bg= "green")
+        self.ventana.estado_filosofos[self.id].config(bg= "red")
+        self.ventana.estado_tenedores[self.id].config(bg= "blue")
         time.sleep(random.randint(0,5))
         self.ventana.estado_filosofos[self.id].config(bg= "white")
         self.ventana.estado_tenedores[self.id].config(bg= "white")
@@ -126,11 +126,11 @@ class Ventana():    #Clase para la ventana
         tk.Label(self.ventana, text= "Tenedor ocupado:").place(x= 430, y= 450)
         tk.Label(self.ventana, text= "Tenedor libre:").place(x= 430, y= 500)
         
-        tk.Canvas(self.ventana, width= 50, height= 50, bg= "yellow").place(x= 600, y= 350)
+        tk.Canvas(self.ventana, width= 50, height= 50, bg= "red").place(x= 600, y= 350)
         tk.Canvas(self.ventana, width= 50, height= 50, bg= "white").place(x= 600, y= 400)
         
         
-        tk.Canvas(self.ventana, width= 50, height= 50, bg= "green").place(x= 600, y= 450)
+        tk.Canvas(self.ventana, width= 50, height= 50, bg= "blue").place(x= 600, y= 450)
         tk.Canvas(self.ventana, width= 50, height= 50, bg= "white").place(x= 600, y= 500)
     
     def logs(self, texto):  #Funcion para imprimir en la ventana
